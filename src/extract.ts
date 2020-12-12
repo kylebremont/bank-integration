@@ -3,7 +3,6 @@ import 'source-map-support/register';
 import * as uuid from 'uuid';
 
 import { extractor } from './extractor';
-import { extractInfo } from './extractor/info';
 import { convertThrownValue } from './framework/errors';
 import {
   Account,
@@ -43,8 +42,8 @@ const extract = async (
       accounts.set(uuid.v4(), account);
     }
 
-    if (extractInfo != null) {
-      const infoResult = await extractInfo(session);
+    if (extractor.extractInfo != null) {
+      const infoResult = await extractor.extractInfo(session);
       if (isErrorResult(infoResult)) {
         return infoResult;
       }
