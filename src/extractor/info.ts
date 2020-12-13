@@ -4,7 +4,7 @@ import {
     Session,
 } from '../framework/model';
 import { ExtractionResult } from '../framework/plugin';
-import { asyncRequest } from '../framework/requests';
+import { HTTPRequest } from './service';
 
 /*
     @parameters customerInfo: object holding the information received from the setting page
@@ -47,13 +47,7 @@ const buildCustomerInfo = (
 export const extractInfo = async (
     session: Session,
 ): Promise<ExtractionResult<Info>> => {
-    const infoResponse = await asyncRequest<string>(
-        'http://firstplaidypus.herokuapp.com/settings/user',
-        {
-            method: 'GET',
-            jar: session.jar,
-        },
-    );
+    const infoResponse = await HTTPRequest('http://firstplaidypus.herokuapp.com/settings/user', 'GET', session.jar);
 
     const customerInfo = JSON.parse(infoResponse.body);
     const address: InfoAddress = buildAddress(customerInfo);

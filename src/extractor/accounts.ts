@@ -6,7 +6,7 @@ import {
   Session,
 } from '../framework/model';
 import { ExtractionResult } from '../framework/plugin';
-import { asyncRequest } from '../framework/requests';
+import { HTTPRequest } from './service';
 
 const parseBalance = (
   balance: string,
@@ -33,13 +33,7 @@ const convertAccountType = (
 export const extractAccounts = async (
   session: Session,
 ): Promise<ExtractionResult<Array<Account>>> => {
-  const accountsResponse = await asyncRequest<string>(
-    'http://firstplaidypus.herokuapp.com/accounts',
-    {
-      method: 'GET',
-      jar: session.jar,
-    },
-  );
+  const accountsResponse = await HTTPRequest('http://firstplaidypus.herokuapp.com/accounts', 'GET', session.jar);
 
   const html = cheerio.load(accountsResponse.body);
   const accountRows = html('.accountrow');

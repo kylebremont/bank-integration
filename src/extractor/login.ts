@@ -4,21 +4,15 @@ import {
 } from '../framework/errors';
 import { Credentials } from '../framework/model';
 import { LoginResult } from '../framework/plugin';
-import { asyncRequest, createJar } from '../framework/requests';
+import { createJar } from '../framework/requests';
+import { HTTPRequest } from './service';
 
 export const login = async (
   creds: Credentials,
 ): Promise<LoginResult> => {
 
   const jar = createJar();
-  await asyncRequest<string>(
-    'http://firstplaidypus.herokuapp.com/login',
-    {
-      method: 'POST',
-      jar: jar,
-      form: creds,
-    },
-  );
+  await HTTPRequest('http://firstplaidypus.herokuapp.com/login', 'POST', jar, creds);
 
   const session = { jar }
   return { session }

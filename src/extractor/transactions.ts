@@ -9,7 +9,7 @@ import {
   ExtractionResult,
   TransactionOptions,
 } from '../framework/plugin';
-import { asyncRequest } from '../framework/requests';
+import { HTTPRequest } from './service';
 
 const csvParse = require('csv-parse/lib/sync'); // tslint:disable-line
 // Helper for parsing CSV response body, including header row if present.
@@ -121,43 +121,18 @@ export const extractTransactions = async (
 ): Promise<ExtractionResult<Array<Transaction>>> => {
 
   // making a get to the download link
-  const downloadPage = await asyncRequest<string>(
-    'http://firstplaidypus.herokuapp.com/download',
-    {
-      method: 'GET',
-      jar: session.jar,
-    },
-  );
-
+  const downloadPage = await HTTPRequest('http://firstplaidypus.herokuapp.com/download', 'GET', session.jar);
   // getting the account id
   const accountId = getAccountId(downloadPage.body, account);
 
   // get call to specific account page
-  const accountInfoResponse = await asyncRequest<string>(
-    `http://firstplaidypus.herokuapp.com/accounts/${accountId}`,
-    {
-      method: 'GET',
-      jar: session.jar,
-    }
-  );
-
+  const accountInfoResponse = await HTTPRequest(`http://firstplaidypus.herokuapp.com/accounts/${accountId}`, 'GET', session.jar);
   // getting the pending transactions
   const pendingTransactions = getPendingTransactions(accountInfoResponse.body, options);
 
   // post call to download paid transactions
-  const transactionResponse = await asyncRequest<string>(
-    'http://firstplaidypus.herokuapp.com/download',
-    {
-      method: 'POST',
-      jar: session.jar,
-      form: {
-        account_id: accountId,
-        start_date: options.startDate,
-        end_date: options.endDate,
-      },
-    },
-  );
-
+  const formBody = { account_id: accountId, start_date: options.startDate, end_date: options.endDate };
+  const transactionResponse = await HTTPRequest('http://firstplaidypus.herokuapp.com/download', 'POST', session.jar, formBody);
   // getting paid transactions
   const csv = parseCSV(transactionResponse.body);
   const paidTransactions = getPaidTransactions(csv);
