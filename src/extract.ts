@@ -97,8 +97,8 @@ const generateJSON = (blob: any) => JSON.stringify(blob, (key, value) => {
 
   // Enter start and end date here.
   const options = {
-    startDate: '2016-01-01',
-    endDate: '2018-04-01',
+    startDate: '2020-11-13',
+    endDate: '2020-12-13',
   };
 
   const result = await extract(creds, options);
