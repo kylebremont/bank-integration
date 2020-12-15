@@ -12,9 +12,13 @@ export const login = async (
 ): Promise<LoginResult> => {
 
   const jar = createJar();
-  await HTTPRequest('http://firstplaidypus.herokuapp.com/login', 'POST', jar, creds);
+  const response = await HTTPRequest('http://firstplaidypus.herokuapp.com/login', 'POST', jar, creds);
+
+  // if you don't get redirected to the accounts page, throw error
+  if (response.headers.location !== 'http://firstplaidypus.herokuapp.com/accounts/') {
+    return errorResult(ExtractorErrorCode.InvalidCredentials);
+  }
 
   const session = { jar }
   return { session }
 }
-errorResult(ExtractorErrorCode.UnsupportedOperation);
